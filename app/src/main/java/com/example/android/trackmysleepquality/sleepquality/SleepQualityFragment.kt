@@ -42,29 +42,41 @@ class SleepQualityFragment : Fragment() {
      *
      * This function uses DataBindingUtil to inflate R.layout.fragment_sleep_quality.
      */
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         // Get a reference to the binding object and inflate the fragment views.
         val binding: FragmentSleepQualityBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_sleep_quality, container, false)
+            inflater, R.layout.fragment_sleep_quality, container, false
+        )
 
+        // Create a reference to the application
         val application = requireNotNull(this.activity).application
 
+        // Get the arguments from the bundle
         val arguments = SleepQualityFragmentArgs.fromBundle(arguments!!)
 
         val dataSource = SleepDatabase.getInstance(application).sleepDatabaseDao
 
+        // Initialize a variable for the ViewModelFactory
         val viewModelFactory = SleepQualityViewModelFactory(arguments.sleepNightKey, dataSource)
-        val sleepQualityViewModel = ViewModelProvider(
-                this, viewModelFactory).get(SleepQualityViewModel::class.java)
 
+        // Initialize a variable for the ViewModel
+        val sleepQualityViewModel = ViewModelProvider(
+            this, viewModelFactory
+        ).get(SleepQualityViewModel::class.java)
+
+        // Bind the view model to the fragment
         binding.sleepQualityViewModel = sleepQualityViewModel
 
+        // Set an observer to Observe when its time to nav back to the SleepTracker Fragment
         sleepQualityViewModel.navigateToSleepTracker.observe(viewLifecycleOwner, Observer {
             if (it == true) { // Observed state is true.
                 this.findNavController().navigate(
-                    SleepQualityFragmentDirections.actionSleepQualityFragmentToSleepTrackerFragment())
+                    SleepQualityFragmentDirections.actionSleepQualityFragmentToSleepTrackerFragment()
+                )
                 // Reset state to make sure we only navigate once, even if the device
                 // has a configuration change.
                 sleepQualityViewModel.doneNavigating()

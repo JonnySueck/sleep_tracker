@@ -21,17 +21,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.android.trackmysleepquality.database.SleepDatabaseDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class SleepQualityViewModel(private val sleepNightKey: Long = 0L,
-    val database: SleepDatabaseDao) :ViewModel() {
+class SleepQualityViewModel(
+    private val sleepNightKey: Long = 0L,
+    val databaseDao: SleepDatabaseDao
+) : ViewModel() {
 
-        private val viewModelJob = Job()
-        private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private val viewModelJob = Job()
 
     /**
      * Variable that tells the fragment whether it should navigate to [SleepTrackerFragment].
@@ -54,16 +53,16 @@ class SleepQualityViewModel(private val sleepNightKey: Long = 0L,
         _navigateToSleepTracker.value = null
     }
 
-        override fun onCleared() {
-            super.onCleared()
-            viewModelJob.cancel()
-        }
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
 
     fun onSetSleepQuality(quality: Int) {
         viewModelScope.launch {
-            val tonight = database.get(sleepNightKey)
+            val tonight = databaseDao.get(sleepNightKey)
             tonight.sleepQuality = quality
-            database.update(tonight)
+            databaseDao.update(tonight)
             _navigateToSleepTracker.value = true
 
         }

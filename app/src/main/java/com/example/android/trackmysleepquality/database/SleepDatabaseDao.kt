@@ -36,7 +36,7 @@ interface SleepDatabaseDao {
 
     // delete all entries from the table
     @Query("DELETE FROM daily_sleep_quality_table")
-    suspend fun clear()
+    suspend fun clearAll()
 
     // get all nights from the table in descending order
     @Query("SELECT * FROM daily_sleep_quality_table ORDER BY nightId DESC")
